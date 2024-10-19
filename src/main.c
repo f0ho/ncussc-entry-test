@@ -2,23 +2,26 @@
 #include"heapSort.h"
 #include"fibSort.h"
 #include<stdio.h>
+#include<time.h>
 
 
 void main(){
-    int a[] = {0,1,4,2,3,5,1};
-    FibHeap * heap = fibHeapMake();
-    fibHeapInsert_key(heap, 1);
-    fibHeapInsert_key(heap, 4);
-    fibHeapInsert_key(heap, 2);
-    fibHeapInsert_key(heap, 3);
-    fibHeapInsert_key(heap, 5);
-    fibHeapInsert_key(heap, 1);
-    int* b = fibSort(heap);
-    fibHeapDestroy(heap);
-    for(int i = 0; i < 6; i++){
-        printf("%d",b[i]);
+    const int length = 10;
+    int a[length];
+    int index = 0;
+    FILE* f = fopen("../data/1_1.txt","r");
+    while(fscanf(f,"%d",&a[index]) == 1){
+        index++;
     }
-
+    fclose(f);
+    clock_t start = clock();
+    bubbleSort(a, length);
+    clock_t end = clock();
+    double timeUsed = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("用时:%fms\n排序结果为:\n", timeUsed);
+    for(int i = 0; i < 10; i++){
+        printf("%d ",a[i]);
+    }
     
 
     //生成随机数
