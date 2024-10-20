@@ -87,9 +87,10 @@
 
        return result;
     }
--   斐波那契排序
+-   斐波那契堆排序
     <details>
     <summary>点击展开代码</summary>
+        
     ```c
     #include <stdio.h>
     #include <stdlib.h>
@@ -358,7 +359,7 @@
         }
         return a;
     }
-    <details>```
+    ```
 ## 测试数据生成
 ```c
 srand(time(NULL)); //设置随机种子
@@ -372,7 +373,7 @@ fclose(f);
 /*
 在main函数中使用以上代码随机生成一些数并储存在data文件夹中,每次手动改变n数量为10,100,1000,10000,100000后运行三次分别生成    1_1.txt,1_2.txt,1_3.txt以及2_1.txt,2_2.txt等等
 */
-
+```
 ## 编译与性能测试
 修改.vscode文件夹下task.json确保编译器正确链接文件<br>
 通过在-g下方添加-o1,-o2等进行不同程度编译优化
@@ -409,6 +410,7 @@ fclose(f);
     ],
     "version": "2.0.0"
 }
+```
 -   冒泡排序数据测试
     ```c
     #include"bubbleSort.h"
