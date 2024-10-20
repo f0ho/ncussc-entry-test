@@ -88,6 +88,8 @@
        return result;
     }
 -   斐波那契排序
+    <details>
+    <summary>点击展开代码</summary>
     ```c
     #include <stdio.h>
     #include <stdlib.h>
@@ -356,7 +358,8 @@
         }
         return a;
     }
-##  测试数据生成
+    <details>```
+## 测试数据生成
 ```c
 srand(time(NULL)); //设置随机种子
 int n = 10;
@@ -370,3 +373,151 @@ fclose(f);
 在main函数中使用以上代码随机生成一些数并储存在data文件夹中,每次手动改变n数量为10,100,1000,10000,100000后运行三次分别生成    1_1.txt,1_2.txt,1_3.txt以及2_1.txt,2_2.txt等等
 */
 
+## 编译与性能测试
+修改.vscode文件夹下task.json确保编译器正确链接文件<br>
+通过在-g下方添加-o1,-o2等进行不同程度编译优化
+```json
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: gcc-13 生成活动文件",
+            "command": "/usr/bin/gcc-13",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "${fileDirname}/main.c", 
+                "${fileDirname}/bubbleSort.c",
+                "${fileDirname}/heapSort.c",
+                "${fileDirname}/fibSort.c",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}",
+                "-lm"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "调试器生成的任务。"
+        }
+    ],
+    "version": "2.0.0"
+}
+-   冒泡排序数据测试
+    ```c
+    #include"bubbleSort.h"
+    #include<stdio.h>
+    #include <sys/resource.h>
+    #include<time.h>
+
+
+    void main(){
+        struct rusage usage;
+        getrusage(RUSAGE_SELF, &usage);
+        const int length = 10;
+        int a[length];
+        int index = 0;
+        FILE* f = fopen("../data/1_1.txt","r");
+        while(fscanf(f,"%d",&a[index]) == 1){
+            index++;
+        }
+        fclose(f);
+        
+        clock_t start = clock();
+        bubbleSort(a, length);
+        clock_t end = clock();
+        double timeUsed = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+        FILE* file = fopen("../data/O0/bubbleSort_1_1.txt","w");
+        fprintf(file, "用时:%fs\n占用内存%ldKB\n排序结果为:\n", timeUsed, usage.ru_maxrss);
+        for(int i = 0; i < length; i++){
+            fprintf(file, "%d ",a[i]);
+        }
+    }
+-   堆排序数据测试
+    ```c
+    #include"heapSort.h"
+    #include<stdio.h>
+    #include <sys/resource.h>
+    #include<time.h>
+    #include <stdlib.h>
+
+
+    void main(){
+
+        struct rusage usage;
+        getrusage(RUSAGE_SELF, &usage);
+        const int length = 10;
+        int a[length];
+        int index = 0;
+        FILE* f = fopen("../data/1_1.txt","r");
+        while(fscanf(f,"%d",&a[index]) == 1){
+            index++;
+        }
+        fclose(f);
+
+        clock_t start = clock();
+        int* b = (int*)malloc(sizeof(int) * length);
+        b = heapSort(a, length);
+        clock_t end = clock();
+        double timeUsed = ((double)(end - start)) / CLOCKS_PER_SEC;
+        FILE* file = fopen("../data/Ofast/heapSort_1_1.txt","w");
+        fprintf(file, "用时:%fs\n占用内存%ldKB\n排序结果为:\n", timeUsed, usage.ru_maxrss);
+        for(int i = 0; i < length; i++){
+            fprintf(file, "%d ",b[i]);
+        }
+        fclose(file);
+
+    }
+-   斐波那契排序数据测试
+    ```c
+    #include"fibSort.h"
+    #include<stdio.h>
+    #include <sys/resource.h>
+    #include<time.h>
+    #include <stdlib.h>
+
+
+    void main(){
+        struct rusage usage;
+        getrusage(RUSAGE_SELF, &usage);
+        const int length = 10;
+        int a[length];
+        int index = 0;
+        FibHeap* heap = fibHeapMake();
+        FILE* f = fopen("../data/1_1.txt","r");
+        while(fscanf(f,"%d",&a[index]) == 1){
+            fibHeapInsert_key(heap,a[index]);
+            index++;
+        }
+        fclose(f);
+        int* b = (int*)malloc(sizeof(int) * length);
+        clock_t start = clock();
+        b = fibSort(heap);
+        clock_t end = clock();
+        double timeUsed = ((double)(end - start)) / CLOCKS_PER_SEC;
+        FILE* file = fopen("../data/O0/fibSort_1_1.txt","w");
+        fprintf(file, "用时:%fs\n占用内存%ldKB\n排序结果为:\n", timeUsed, usage.ru_maxrss);
+        for(int i = 0; i < length; i++){
+            fprintf(file, "%d ",b[i]);
+        }
+        fclose(file);
+
+
+    }
+## 结果与分析
+## 讨论
+## 结论
+## 参考文献
+https://blog.csdn.net/baidu_40395808/article/details/138541629 斐波那契堆的C语言实现<br>
+https://www.cnblogs.com/luanxm/p/10848032.html clash verge安装<br>
+https://chatgpt.com 代码书写帮助<br>
+## 附录
+本实验所有代码都在github上托管<br>
+[代码地址](https://github.com/f0ho/ncussc-entry-test)

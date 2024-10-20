@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "fibsort.h": "c",
-        "bubblesort.h": "c"
+        "bubblesort.h": "c",
+        "stdio.h": "c"
     }
 }
