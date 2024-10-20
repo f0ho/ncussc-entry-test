@@ -482,7 +482,7 @@ fclose(f);
         fclose(file);
 
     }
--   斐波那契排序数据测试
+-   斐波那契堆排序数据测试
     ```c
     #include"fibSort.h"
     #include<stdio.h>
@@ -598,19 +598,19 @@ for i = 1:5
     print(route2, '-dsvg');
 end
 ```
--   O0
+### O0
     <img src="data/result/O0.svg" width="500px" />
 
--   O1
+### O1
     <img src="data/result/O1.svg" width="500px" />
 
--   O2
+### O2
     <img src="data/result/O2.svg" width="500px" />
 
--   O3
+### O3
     <img src="data/result/O3.svg" width="500px" />
 
--   Ofast
+### Ofast
     <img src="data/result/Ofast.svg" width="500px" />
 ### 分析
 三个算法在不同优化条件下运行时间基本相同,占用内存大小略有波动都在34000到35000KB之间.<br>
@@ -631,7 +631,7 @@ end
 在算法速度方面**堆排序最快**,**当数据量小于100时冒泡排序比斐波那契堆排序快**<br>
 之后算法速度呈现**堆排序>斐波那契堆排序>冒泡排序**的规律
 ## 讨论
--   启示
+-   启示:
     从代码实现难易程度来看冒泡排序无疑是最简单的,斐波那契堆排序是最复杂的.<br>
     而当数据量小于100000时冒泡排序所用的时间并非不可接受,所以根据数据量来选择算法或许是个好主意.<br>
     斐波那契堆排序就并不适用于较小数据量的排序.
