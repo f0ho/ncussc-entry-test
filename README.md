@@ -593,6 +593,20 @@ for i = 1:5
     print(route2, '-dsvg');
 end
 ```
+### O0
+<img src="data/result/O0.svg" width="500px" />
+
+### O1
+<img src="data/result/O1.svg" width="500px" />
+
+### O2
+<img src="data/result/O2.svg" width="500px" />
+
+### O3
+<img src="data/result/O3.svg" width="500px" />
+
+### Ofast
+<img src="data/result/Ofast.svg" width="500px" />
 
 ## 讨论
 -   
