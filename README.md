@@ -524,10 +524,10 @@ fclose(f);
 本实验所有代码都在github上托管<br>
 [代码地址](https://github.com/f0ho/ncussc-entry-test)
 ## 实验过程所遇问题
--   gcc无法自动链接源文件
+-   gcc无法自动链接源文件<br>
     解决方法:修改位于.vscode文件下的task.json文件
--   手搓斐波那契堆失败
+-   手搓斐波那契堆失败<br>
     解决方法:CV CSDN上fufufunny的代码
--   git push总是无法连接到github
-    解决方法:暂未解决
+-   git push总是无法连接到github<br>
+    解决方法:暂未解决改用window push
 
