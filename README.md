@@ -517,9 +517,17 @@ fclose(f);
 ## 讨论
 ## 结论
 ## 参考文献
-https://blog.csdn.net/baidu_40395808/article/details/138541629 斐波那契堆的C语言实现<br>
-https://www.cnblogs.com/luanxm/p/10848032.html clash verge安装<br>
-https://chatgpt.com 代码书写帮助<br>
+- https://blog.csdn.net/baidu_40395808/article/details/138541629 斐波那契堆的C语言实现<br>
+- https://www.cnblogs.com/luanxm/p/10848032.html clash verge安装<br>
+- https://chatgpt.com 代码书写帮助<br>
 ## 附录
 本实验所有代码都在github上托管<br>
 [代码地址](https://github.com/f0ho/ncussc-entry-test)
+## 实验过程所遇问题
+-   gcc无法自动链接源文件
+    解决方法:修改位于.vscode文件下的task.json文件
+-   手搓斐波那契堆失败
+    解决方法:CV CSDN上fufufunny的代码
+-   git push总是无法连接到github
+    解决方法:暂未解决
+
