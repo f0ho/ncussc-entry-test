@@ -43,7 +43,7 @@ void main(){
     // }
     // fclose(file);
 
-    //堆排序测试
+    // 堆排序测试
     // struct rusage usage;
     // getrusage(RUSAGE_SELF, &usage);
     // const int length = 100000;

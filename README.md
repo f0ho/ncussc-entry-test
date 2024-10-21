@@ -6,7 +6,9 @@
 最后结果表明:<br>
 1. **堆排序最快**
 2. 因**斐波那契堆排序常数因素影响大**导致数据量小于100时冒泡排序比其快,且斐波那契堆排序在数据量较小时速度比堆排序慢
-3. 数据量大于1000小于100000时三种算法速度有**堆排序>斐波那契堆排序>冒泡排序**的关系
+3. 数据量大于1000小于100000时三种算法速度有**堆排序>斐波那契堆排序>冒泡排序**的关系，斐波那契堆排序速度与堆排序速度差距减小.
+4. 在数据量小于100000的情况下**不同算法在不同gcc编译优化情况下有不同的最佳优化选项**<br>
+5. **对比算法本身的优化gcc的编译优化可以忽略不计**<br>
 ## 前言
 ### 什么样的程序才是好的程序?<br>
 对于用户来,说好的程序往往代表着人性化的交互界面,高效率,安全等等.<br>
@@ -460,23 +462,24 @@ fclose(f);
 
         struct rusage usage;
         getrusage(RUSAGE_SELF, &usage);
-        const int length = 10;
-        int a[length];
-        int index = 0;
-        FILE* f = fopen("../data/1_1.txt","r");
+        const int length = 100000;
+        int a[length + 1];//第一个为占位符
+        a[0] = 1;
+        int index = 1;
+        FILE* f = fopen("../data/5_3.txt","r");
         while(fscanf(f,"%d",&a[index]) == 1){
             index++;
         }
         fclose(f);
 
         clock_t start = clock();
-        int* b = (int*)malloc(sizeof(int) * length);
+        int* b = (int*)malloc(sizeof(int) * length + 1);
         b = heapSort(a, length);
         clock_t end = clock();
         double timeUsed = ((double)(end - start)) / CLOCKS_PER_SEC;
-        FILE* file = fopen("../data/Ofast/heapSort_1_1.txt","w");
+        FILE* file = fopen("../data/Ofast/heapSort_5_3.txt","w");
         fprintf(file, "用时:%fs\n占用内存%ldKB\n排序结果为:\n", timeUsed, usage.ru_maxrss);
-        for(int i = 0; i < length; i++){
+        for(int i = 1; i < length + 1; i++){
             fprintf(file, "%d ",b[i]);
         }
         fclose(file);
@@ -522,6 +525,7 @@ fclose(f);
 对实验结果求平均值并存在data/result文件夹下<br>
 使用matlab绘制图像并保存在data/result文件夹下
 ```matlab
+
 types = ["bubbleSort", "fibSort", "heapSort"];
 options = ["O0","O1","O2","O3","Ofast"];
 times = [];
@@ -561,17 +565,17 @@ data_sizes = [10,100,1000,10000,100000];
 
 for i = 1:5
     bubbleSort_times = times(1 + 15 * (i - 1):5 + 15 * (i - 1));
-    heapSort_times = times(6 + 15 * (i - 1):10 + 15 * (i - 1));
-    fibheapSort_times = times(11 + 15 * (i - 1):15 + 15 * (i - 1));
+    fibHeapSort_times = times(6 + 15 * (i - 1):10 + 15 * (i - 1));
+    heapSort_times = times(11 + 15 * (i - 1):15 + 15 * (i - 1));
     bubbleSort_mem = memory(1 + 15 * (i - 1):5 + 15 * (i - 1));
-    heapSort_mem = memory(6 + 15 * (i - 1):10 + 15 * (i - 1));
-    fiboheapSort_mem = memory(11 + 15 * (i - 1):15 + 15 * (i - 1));
+    fibHeapSort_mem = memory(6 + 15 * (i - 1):10 + 15 * (i - 1));
+    heapSort_mem = memory(11 + 15 * (i - 1):15 + 15 * (i - 1));
     figure;
     subplot(1, 2, 1); % 左侧绘制时间曲线
     hold on;
     plot(data_sizes, bubbleSort_times, '-o', 'DisplayName', '冒泡排序');
-    plot(data_sizes, heapSort_times, '-x', 'DisplayName', '斐波那契堆排序');
-    plot(data_sizes, fibHeapSort_times, '-s', 'DisplayName', '堆排序');
+    plot(data_sizes, fibHeapSort_times, '-x', 'DisplayName', '斐波那契堆排序');
+    plot(data_sizes, heapSort_times, '-s', 'DisplayName', '堆排序');
     set(gca, 'XScale', 'log'); % 将X轴设为对数刻度
     set(gca, 'YScale', 'log'); % 将Y轴设为对数刻度
     xlabel('数据量');
@@ -581,8 +585,8 @@ for i = 1:5
     subplot(1, 2, 2); % 右侧绘制内存曲线
     hold on;
     plot(data_sizes, bubbleSort_mem, '-o', 'DisplayName', '冒泡排序');
-    plot(data_sizes, heapSort_mem, '-x', 'DisplayName', '斐波那契堆排序');
-    plot(data_sizes, fibHeapSort_mem, '-s', 'DisplayName', '堆排序');
+    plot(data_sizes, fibHeapSort_mem, '-x', 'DisplayName', '斐波那契堆排序');
+    plot(data_sizes, heapSort_mem, '-s', 'DisplayName', '堆排序');
     hold off;
     set(gca, 'XScale', 'log'); % 将X轴设为对数刻度
     
@@ -596,6 +600,73 @@ for i = 1:5
     sgtitle(options(i));
     route2 = sprintf('../data/result/%s.svg', options(i));
     print(route2, '-dsvg');
+end
+
+
+for i = 1:3
+    x = [1,2,3,4,5]; % 创建一个数值型索引
+    sortTimes1 = [];
+    sortTimes2 = [];
+    sortTimes3 = [];
+    sortTimes4 = [];
+    sortTimes5 = [];
+    sortMem1 = [];
+    sortMem2 = [];
+    sortMem3 = [];
+    sortMem4 = [];
+    sortMem5 = [];
+
+    for j = 1:5
+        sortTimes1 = [sortTimes1;times((i-1) * 25 + 1 + (j-1) * 5)];
+        sortTimes2 = [sortTimes2;times((i-1) * 25 + 2 + (j-1) * 5)];
+        sortTimes3 = [sortTimes3;times((i-1) * 25 + 3 + (j-1) * 5)];
+        sortTimes4 = [sortTimes4;times((i-1) * 25 + 4 + (j-1) * 5)];
+        sortTimes5 = [sortTimes5;times((i-1) * 25 + 5 + (j-1) * 5)];
+        sortMem1 = [sortMem1;memory((i-1) * 25 + 1 + (j-1) * 5)];
+        sortMem2 = [sortMem2;memory((i-1) * 25 + 2 + (j-1) * 5)];
+        sortMem3 = [sortMem3;memory((i-1) * 25 + 3 + (j-1) * 5)];
+        sortMem4 = [sortMem4;memory((i-1) * 25 + 4 + (j-1) * 5)];
+        sortMem5 = [sortMem5;memory((i-1) * 25 + 5 + (j-1) * 5)];
+    end
+
+    figure;
+    subplot(1, 2, 1); % 左侧绘制时间曲线
+    hold on;
+    plot(x, sortTimes1, '-o', 'DisplayName', '10');
+    plot(x, sortTimes2, '-x', 'DisplayName', '100');
+    plot(x, sortTimes3, '-s', 'DisplayName', '1000');
+    plot(x, sortTimes4, '-*', 'DisplayName', '10000');
+    plot(x, sortTimes5, '-+', 'DisplayName', '100000');
+    set(gca, 'XScale', 'log'); % 将X轴设为对数刻度
+    set(gca, 'YScale', 'log'); % 将Y轴设为对数刻度
+    xticks(x); % 设置 X 轴刻度
+    xticklabels(options); % 使用字符串数组作为刻度标签
+    xlabel('优化等级');
+    ylabel('所用时间 (ms)');
+    title('时间');
+
+    subplot(1, 2, 2); % 右侧绘制内存曲线
+    hold on;
+    plot(x, sortMem1, '-o', 'DisplayName', '10');
+    plot(x, sortMem2, '-x', 'DisplayName', '100');
+    plot(x, sortMem3, '-s', 'DisplayName', '1000');
+    plot(x, sortMem4, '-*', 'DisplayName', '10000');
+    plot(x, sortMem5, '-+', 'DisplayName', '100000');
+    hold off;
+    set(gca, 'XScale', 'log'); % 将X轴设为对数刻度
+    
+    xticks(x); % 设置 X 轴刻度
+    xticklabels(options); % 使用字符串数组作为刻度标签
+    xlabel('优化等级');
+    ylabel('内存占用 (KB)');
+    title('内存');
+    legend('show');
+    grid on;
+
+    % 调整布局
+    sgtitle(types(i));
+    route3 = sprintf('../data/result/%s.svg', types(i));
+    print(route3, '-dsvg');
 end
 ```
 ### O0
@@ -613,26 +684,44 @@ end
 ### Ofast
 <img src="data/result/Ofast.svg" width="500px" />
 
+### 冒泡排序
+<img src="data/result/bubbleSort.svg" width="500px">
+
+### 斐波那契堆排序
+<img src="data/result/fibSort.svg" width="500px">
+
+### 堆排序
+<img src="data/result/heapSort.svg" width="500px">
+
 ### 分析
-三个算法在不同优化条件下运行时间基本相同,占用内存大小略有波动都在34000到35000KB之间.<br>
-因程序运行时间不同,**占用内存大小的波动可视为误差**<br>
-且在不同优化条件下**各算法运行速度无明显改变**<br>
-其中**冒泡排序**在数据量低于100时运行速度比**斐波那契堆排序**快<br>
-在此之后三种排序算法速度呈现**堆排序>斐波那契堆排序>冒泡排序**的趋势<br>
-而**堆排序**一直有着较快的排序速度<br>
-结果与各个排序算法的时间复杂度略有出路<br>
-**冒泡排序:O(n^2)**<br>
-**斐波那契堆排序:O(nlogn)**<br>
-**堆排序:O(nlogn)**<br>
-推测可能是因为**斐波那契堆排序的常数因素影响大**导致在数据量较小时其排序速度比堆排序慢
+1.  三个算法在不同优化条件下运行时间略有变化<br>
+    -   冒泡排序<br>
+        在数据量大于1000时在O0到O2优化下速度略有提升,O3优化时速度反而变慢Ofast再次下降
+    -   堆排序<br>
+        在O0到O1优化下速度略有提升,O2到O3优化时速度反而变慢Ofast再次下降
+    -   斐波那契堆排序<br>
+        在O0到O2优化下速度略有下降,O3优化时速度最快,Ofast优化时速度再次下降
+
+2.  占用内存大小略有波动都在34000到35000KB之间.<br>
+    因程序运行时间不同,**占用内存大小的波动可视为误差**<br>
+3.  在不同优化条件下**各算法运行速度与优化选项有关,不同算法最佳优化选项不同**<br>
+    其中**冒泡排序**在数据量低于100时运行速度比**斐波那契堆排序**快<br>
+    在此之后三种排序算法速度呈现**堆排序>斐波那契堆排序>冒泡排序**的趋势,且**斐波那契堆排序和堆排序差距逐渐减小**<br>
+    而**堆排序**一直有着较快的排序速度<br>
+    结果与各个排序算法的时间复杂度略有出路<br>
+    **冒泡排序:O(n^2)**<br>
+    **斐波那契堆排序:O(nlogn)**<br>
+    **堆排序:O(nlogn)**<br>
+    推测可能是因为**斐波那契堆排序的常数因素影响大**导致在数据量较小时其排序速度比堆排序慢
 
 ## 结论
-在数据量小于100000的情况下**gcc的优化等级并无多大影响**<br>
-在算法速度方面**堆排序最快**,**当数据量小于100时冒泡排序比斐波那契堆排序快**<br>
-之后算法速度呈现**堆排序>斐波那契堆排序>冒泡排序**的规律
+1. 在数据量小于100000的情况下**不同算法在不同gcc编译优化情况下有不同的最佳优化选项**<br>
+2. 在算法速度方面**堆排序最快**,**当数据量小于100时冒泡排序比斐波那契堆排序快**<br>
+3. 之后算法速度呈现**堆排序>斐波那契堆排序>冒泡排序**的规律,且**斐波那契堆排序和堆排序差距逐渐减小**<br>
 ## 讨论
 
 -   启示<br>
+    对比算法本身的优化gcc的编译优化可以忽略不计<br>
     从代码实现难易程度来看冒泡排序无疑是最简单的,斐波那契堆排序是最复杂的.<br>
     而当数据量小于100000时冒泡排序所用的时间并非不可接受,所以根据数据量来选择算法或许是个好主意.<br>
     斐波那契堆排序就并不适用于较小数据量的排序.
